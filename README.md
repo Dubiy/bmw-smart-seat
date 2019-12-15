@@ -17,12 +17,12 @@ On every seat will be relay block, fuses, and UART/I2C receiver like Arduino min
     3. Options
 
 2. Select motor
-    0. Back
-    1. Motor 1
-    2. Motor 2
-    3. Motor 3
-    4. Motor 4
-    5. Motor 5
+    1. Back
+    2. Motor 1
+    3. Motor 2
+    4. Motor 3
+    5. Motor 4
+    6. Motor 5
 
 3. Tune position
     1. On every rotation-step add 0.5s to motor execution. The direction depends on the step direction.
@@ -31,12 +31,12 @@ On every seat will be relay block, fuses, and UART/I2C receiver like Arduino min
 
 4. Options
     1. Connectivity
-        0. Off
-        1. Wifi
-        2. Bluetooth
+        1. Off
+        2. Wifi
+        3. Bluetooth
     2. Idle-screen
-        0. Off
-        1. Seat-selection
-        2. Time
-        3. Time + voltage
-        4. Other...
+        1. Off
+        2. Seat-selection
+        3. Time
+        4. Time + voltage
+        5. Other...
