@@ -38,9 +38,15 @@ On every seat will be relay block, fuses, and UART/I2C receiver like Arduino min
         1. Off
         2. Wifi
         3. Bluetooth
-    2. Idle-screen
+    2. Brightness
+    3. Idle-screen
         1. Off
         2. Seat-selection
         3. Time
         4. Time + voltage
         5. Other...
+
+# Libs
+
+https://github.com/neu-rah/ArduinoMenu
+
