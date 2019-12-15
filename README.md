@@ -1,9 +1,13 @@
 # BMW e28 - custom seat control
 
 Problem: Front seats have 5 motos each, currently without control panel.
+
 Goal: Add control module with user-friendly UI and commutation block.
+
 On the front panel add OLED-display and encoder for user interactions.
+
 Also, a good point to use ESP-32 as MCU, because it has Bluetooth and wifi on board. It allows adding some functionality in the future. 
+
 MCU connects to every seat over UART, or I2C (todo decision).
 On every seat will be relay block, fuses, and UART/I2C receiver like Arduino mini/micro, or something else. 
 
