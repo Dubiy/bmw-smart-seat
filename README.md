@@ -50,3 +50,17 @@ On every seat will be relay block, fuses, and UART/I2C receiver like Arduino min
 
 https://github.com/neu-rah/ArduinoMenu
 
+
+Total 5 hr * $10 = $50
+
+
+Сума
+50.81hr * $25 = $1270.25
+
+Податки
+$1270.25 - 5% = $1206.7375
+
+Продаж USD по курсу 23.30 (27/12/2019, ПриватБанк)
+$1206.7375 * 23.30 = 28117UAH
+
+47.5 + 1206.7375
