@@ -9,8 +9,8 @@ using std::vector;
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
-#define ROTARY_A 4
-#define ROTARY_B 5
+#define ROTARY_A 15
+#define ROTARY_B 13
 #define ROTARY_BUTTON 2
 
 #define UI_MAIN 0
@@ -34,12 +34,17 @@ Rotary rotary = Rotary(ROTARY_A, ROTARY_B);
  
 void testdrawchar(int);
 void onButtonPress();
+void onRotate();
 void render();
 void drawMenu(String, const vector<String> &items);
 void processMenu();
 void drawTune();
 
 volatile bool doProcess = false;
+volatile bool doRender = false;
+volatile unsigned char rotateResult = 0;
+unsigned char previousDirection = 0;
+
 
 volatile int uiScreen = UI_MAIN;
 int uiItem = 0;
@@ -53,11 +58,16 @@ volatile int rotaryVal = 0;
 volatile int menuItem = 0;
 
 uint32_t lastService = 0;
+uint32_t executeUntil = 0;
 
 void setup() {
   Serial.begin(9600);
+  rotary.begin(true);
+
   pinMode(ROTARY_BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(ROTARY_BUTTON), onButtonPress, RISING);
+  attachInterrupt(digitalPinToInterrupt(ROTARY_A), onRotate, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(ROTARY_B), onRotate, CHANGE);
 
   // Start I2C Communication SDA = 5 and SCL = 4 on Wemos Lolin32 ESP32 with built-in SSD1306 OLED
   Wire.begin(5, 4);
@@ -69,7 +79,7 @@ void setup() {
   display.clearDisplay();
   display.display();
 
-  rotary.begin(true);
+  
 
 
 
@@ -78,24 +88,41 @@ void setup() {
 }
  
 void loop() {
-  unsigned char result = rotary.process(); // rewrite on iterrupts
-
-  if (lastService + renderInterval < micros()) {
+  if (doRender || lastService + renderInterval < micros()) {
     lastService = micros();                
     render();
   }
 
+  
+  // executeUntil = micros();
+  if (rotateResult && uiScreen == UI_TUNE) {
+    //rotateResult == DIR_CW
 
-  if (result) {
-    rotaryVal += result == DIR_CW ? 1 : -1;
+    if (previousDirection != rotateResult && previousDirection) {
+      executeUntil = 0;
+    } else {
+      executeUntil = millis() + 1000;
+    }
     
-    testdrawchar(rotaryVal);
-    Serial.println(result == DIR_CW ? "Right" : "Left");
+    doRender = true;
+    previousDirection = rotateResult;
+    rotateResult = 0;
   }
+
+  if (executeUntil && executeUntil > millis()) {
+    // rotate motor
+  } else {
+    // stop
+    executeUntil = 0;
+  }
+
+
+
 
   if (doProcess) {
     doProcess = false;
     processMenu();
+    doRender = true;
   }
 }
 
@@ -106,7 +133,7 @@ void render() {
   switch (uiScreen) 
   {
     case UI_MAIN:
-      drawMenu("Select seat", {"Left", "Right", "Options", "Item4", "Item 5", "Item 6", "Item 7", "Item 8"});
+      drawMenu("Pick seat", {"Left", "Right", "Options", "Item4", "Item 5", "Item 6", "Item 7", "Item 8"});
       break;
 
     case UI_MOTOR_SELECT:
@@ -134,10 +161,12 @@ void render() {
       break;
   }
   display.display();
+  doRender = false;
 }
 
 void drawMenu(String title, const vector<String> &items) {
   display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
   display.setTextWrap(false);
   display.setCursor(10, 0);
   display.println(title);
@@ -318,7 +347,12 @@ void drawTune() {
   display.println(activeSeat);
   display.print("active motor ");
   display.println(activeMotor);
-  
+  display.print("rotary ");
+  display.println(rotaryVal);
+  display.print("executeUntil ");
+  display.println(executeUntil);
+    display.print("direcrion ");
+  display.println(previousDirection);
 }
 
 void testdrawchar(int number) {
@@ -335,5 +369,13 @@ void testdrawchar(int number) {
 void onButtonPress() {
   // rotaryVal = -rotaryVal;
   doProcess = true;
+}
+
+void onRotate() {
+  rotateResult = rotary.process();
+  if (rotateResult) {
+    rotaryVal += rotateResult == DIR_CW ? 1 : -1;
+    doRender = true;
+  }
 }
 
