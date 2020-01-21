@@ -75,16 +75,9 @@ void setup() {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
   }
-  // Clear the buffer.
+
   display.clearDisplay();
   display.display();
-
-  
-
-
-
-
-
 }
  
 void loop() {
@@ -145,7 +138,7 @@ void render() {
       break;
 
     case UI_OPTIONS: 
-      drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "< Back"});
+      drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "Restart", "< Back"});
       break;
 
     case UI_OPT_CONNECT:
@@ -254,7 +247,7 @@ void processMenu() {
       break;
 
     case UI_OPTIONS: 
-      //drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "< Back"});
+      //drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "Restart", "< Back"});
     
       uiItemTop = uiItem = rotaryVal;
       rotaryVal = 0;
@@ -272,6 +265,9 @@ void processMenu() {
         case 2:
           uiScreen = UI_OPT_IDLE;
           /* code */
+          break;
+        case 3:
+          ESP.restart();
           break;
         default:
           uiScreen = UI_MAIN;
