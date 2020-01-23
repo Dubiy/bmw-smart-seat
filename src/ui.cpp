@@ -20,7 +20,7 @@ void render() {
       break;
 
     case UI_OPTIONS: 
-      drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "Restart", "< Back"});
+      drawMenu("Options", {"Connectivity", "Brightness", "Idle-screen", "Restart", "Factory reset ", "< Back"});
       break;
 
     case UI_OPT_CONNECT:
@@ -29,6 +29,13 @@ void render() {
 
     case UI_OPT_IDLE: 
       drawMenu("Idle", {"Off", "Seat-selection", "Time", "Time+Voltage", "Other...", "< Back"});
+      break;
+
+    case UI_WIFI_INFO:
+      wifiInfoScreen();
+      break;
+    case UI_DEBUG:
+      debugScreen();
       break;
 
     default:
@@ -69,17 +76,29 @@ void processMenu() {
 
       uiItem = rotaryVal;
       rotaryVal = 0;
-      
+      rotateResult = 0;
+
       switch (uiItem)
       {
         case 0:
+          uiScreen = UI_TUNE;
+          activeMotor = MOTOR_ANGLE;
+        break;
         case 1:
+          uiScreen = UI_TUNE;
+          activeMotor = MOTOR_FORWARD;
+        break;
         case 2:
+          uiScreen = UI_TUNE;
+          activeMotor = MOTOR_HEAD;
+        break;
         case 3:
+          uiScreen = UI_TUNE;
+          activeMotor = MOTOR_HZ1;
+        break;
         case 4:
           uiScreen = UI_TUNE;
-          activeMotor = uiItem;
-          /* code */
+          activeMotor = MOTOR_HZ2;
           break;
         
         default: 
@@ -92,7 +111,7 @@ void processMenu() {
     case UI_TUNE:
       uiScreen = UI_MOTOR_SELECT;
       rotaryVal = uiItem;
-
+     
 
       break;
 
@@ -119,6 +138,16 @@ void processMenu() {
         case 3:
           ESP.restart();
           break;
+        case 4:
+          settings.ssid = "";
+          settings.pass = "";
+          settings.secret = "";
+          settings.title = "";
+          setSettings(settings);
+          delay(50);
+          ESP.restart();
+          break;
+
         default:
           uiScreen = UI_MAIN;
           rotaryVal = 2;
@@ -173,8 +202,6 @@ void processMenu() {
           break;
       } 
       break;
-
-
     default:
       // drawMenu("Undefined", {"< Back"});
 
@@ -235,8 +262,38 @@ void drawTune() {
   display.println(previousDirection);
 }
 
+void debugScreen() {
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextWrap(true);
+  display.setCursor(10, 0);
+  display.println("debug screen");
+  display.print("wifi ");
+  display.println(WiFi.softAPgetStationNum());
+  display.print("active motor ");
+  display.println(activeMotor);
+  display.print("rotary ");
+  display.println(rotaryVal);
+  display.print("executeUntil ");
+  display.println(executeUntil);
+  display.print("direcrion ");
+  display.println(previousDirection);
+}
 
-
+void wifiInfoScreen() {
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextWrap(true);
+  display.setCursor(0, 0);
+  display.println("Setup mode");
+  display.println("Connect and config");
+  display.print("ssid: ");
+  display.println(settings.ssid);
+  display.print("pass: ");
+  display.println(settings.pass);
+  display.print("IP: ");
+  display.println(WiFi.softAPIP());
+}
 
 
 
